@@ -74,6 +74,8 @@ while True:
     for text in bull_texts2:
         if text.text.strip():  # check if the text is not an empty string
             bulldisfe.append(int(text.text))
+        else:
+            bulldisfe.append(0)
     for text in bull_texts3:
         bulldisturn.append(text.text)
     for text in bear_texts:
@@ -81,10 +83,13 @@ while True:
     for text in bear_texts2:
         if text.text.strip():  # check if the text is not an empty string
             beardisfe.append(int(text.text))
+        else:
+            beardisfe.append(0)
     for text in bear_texts3:
         beardisturn.append(text.text)
     
-    print(bulldisfe)
+    print(beardis)
+    print(beardisfe)
     # Data
     # x = ['20,600 - 20,699', '20,700 - 20,799', '20,800 - 20,899', '20,900 - 20,999', '21,000 - 21,099', '21,100 - 21,199']
     # y = [32, 1315, 10113, 3672, 4283, 764]
@@ -95,23 +100,57 @@ while True:
         y=bulldis,
         orientation='h',
         text=bulldisfe,
-        textposition='auto'
+        name='Bull FE',
+        textposition='auto',
+        marker=dict(color='blue')
     )
+    
+   
+    trace2 = go.Bar(
+        x=beardisfe,
+        y=beardis,
+        orientation='h',
+        name='Bear FE',
+        text=beardisfe,
+        textposition='auto',
+        marker=dict(color='red')
+    )
+    
     
     # Create layout
     layout = go.Layout(
         title='Histogram',
         xaxis=dict(title='Count'),
-        yaxis=dict(title='Range')
+        yaxis=dict(title='Range'),
+        height=900,
     )
     
     # Create figure
-    fig = go.Figure(data=[trace], layout=layout)
+    fig = go.Figure(data=[trace, trace2], layout=layout)
     
-    # Show plot
-    fig.show()
-    pio.write_html(fig, file='testing.html', auto_open=False)
+    # Change color of specific bars
+    # color_list = ['grey' if i in [0, 2, 4] else 'blue' for i in range(len(bulldisfe))]
+    # fig.data[0].marker.color = color_list
         
+    # Show plot
+    plotly_html = pio.to_html(fig, full_html=False)
+
+    # Create the HTML string with the JavaScript code to reload the page
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta http-equiv="refresh" content="30">
+        </head>
+        <body>
+            {plotly_html}
+        </body>
+    </html>
+    """
+    
+    # Write the HTML file to disk using utf-8 encoding
+    with open('testing.html', 'w', encoding='utf-8') as f:
+        f.write(html)    
     
     time.sleep(30)
 
